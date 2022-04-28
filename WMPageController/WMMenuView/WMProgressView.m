@@ -108,25 +108,53 @@
     CGFloat lineWidth = (self.hollow || self.hasBorder) ? 1.0 : 0.0;
     
     if (self.isTriangle) {
+        //绘制三角形
         CGContextMoveToPoint(ctx, startX, height);
         CGContextAddLineToPoint(ctx, endX, height);
         CGContextAddLineToPoint(ctx, startX + width / 2.0, 0);
         CGContextClosePath(ctx);
         CGContextSetFillColorWithColor(ctx, self.color);
+        return;
+    }
+    
+    if (self.lineGradientColors) {
+        NSMutableArray *ar = [NSMutableArray array];
+        
+        for(UIColor *c in self.lineGradientColors) {
+            [ar addObject:(id)c.CGColor];
+        }
+                
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(startX, lineWidth / 2.0, width, height - lineWidth) cornerRadius:self.cornerRadius];
+        CGContextAddPath(ctx, path.CGPath);
+        CGContextClip(ctx);
+
+        CGFloat locations[] = { 0.0, 1.0 };
+
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (CFArrayRef)ar, locations);
+        
+        CGRect pathRect = CGPathGetBoundingBox(path.CGPath);
+        CGPoint startPoint = CGPointMake(CGRectGetMinX(pathRect), CGRectGetMidY(pathRect));
+        CGPoint endPoint = CGPointMake(CGRectGetMaxX(pathRect), CGRectGetMidY(pathRect));
+            
+        CGContextSetLineCap(ctx, kCGLineCapRound);
+
+        CGContextDrawLinearGradient(ctx, gradient, startPoint , endPoint , 0);
+                
+        CGGradientRelease(gradient);
+        CGColorSpaceRelease(colorSpace);
+    }else{
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(startX, lineWidth / 2.0, width, height - lineWidth) cornerRadius:self.cornerRadius];
+        CGContextAddPath(ctx, path.CGPath);
+        
+        if (self.hollow) {
+            CGContextSetStrokeColorWithColor(ctx, self.color);
+            CGContextStrokePath(ctx);
+            return;
+        }
+        CGContextSetFillColorWithColor(ctx, self.color);
         CGContextFillPath(ctx);
-        return;
     }
-    
-    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(startX, lineWidth / 2.0, width, height - lineWidth) cornerRadius:self.cornerRadius];
-    CGContextAddPath(ctx, path.CGPath);
-    
-    if (self.hollow) {
-        CGContextSetStrokeColorWithColor(ctx, self.color);
-        CGContextStrokePath(ctx);
-        return;
-    }
-    CGContextSetFillColorWithColor(ctx, self.color);
-    CGContextFillPath(ctx);
     
     if (self.hasBorder) {
         // 计算点

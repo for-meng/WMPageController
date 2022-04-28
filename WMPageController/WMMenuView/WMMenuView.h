@@ -81,12 +81,15 @@ typedef NS_ENUM(NSUInteger, WMMenuViewLayoutMode) {
 @property (nonatomic, assign) WMMenuViewLayoutMode layoutMode;
 @property (nonatomic, assign) CGFloat contentMargin;
 @property (nonatomic, strong) UIColor *lineColor;
+@property(nonatomic , strong) NSArray *lineGradientColors;
 @property (nonatomic, assign) CGFloat progressViewBottomSpace;
 @property (nonatomic, weak) id<WMMenuViewDelegate> delegate;
 @property (nonatomic, weak) id<WMMenuViewDataSource> dataSource;
 @property (nonatomic, weak) UIView *leftView;
 @property (nonatomic, weak) UIView *rightView;
 @property (nonatomic, copy) NSString *fontName;
+@property (nonatomic, copy) UIFont *font;
+@property (nonatomic, copy) UIFont *selectedFont;
 @property (nonatomic, weak) UIScrollView *scrollView;
 /** 进度条的速度因数，默认为 15，越小越快， 大于 0 */
 @property (nonatomic, assign) CGFloat speedFactor;

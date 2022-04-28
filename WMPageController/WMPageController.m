@@ -400,11 +400,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _markedSelectIndex = kWMUndefinedIndex;
     _controllerCount  = kWMControllerCountUndefined;
     _scrollEnable = YES;
-    _progressViewCornerRadius = WMUNDEFINED_VALUE;
-    _progressHeight = WMUNDEFINED_VALUE;
     
     self.automaticallyCalculatesItemWidths = NO;
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    [UIScrollView appearance].contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     self.preloadPolicy = WMPageControllerPreloadPolicyNever;
     self.cachePolicy = WMPageControllerCachePolicyNoLimit;
     
@@ -436,9 +434,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     scrollView.showsHorizontalScrollIndicator = NO;
     scrollView.bounces = self.bounces;
     scrollView.scrollEnabled = self.scrollEnable;
-    if (@available(iOS 11.0, *)) {
-        scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-    }
+    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     [self.view addSubview:scrollView];
     self.scrollView = scrollView;
     
@@ -452,21 +448,30 @@ static NSInteger const kWMControllerCountUndefined = -1;
     WMMenuView *menuView = [[WMMenuView alloc] initWithFrame:CGRectZero];
     menuView.delegate = self;
     menuView.dataSource = self;
-    menuView.style = self.menuViewStyle;
+    menuView.style = WMMenuViewStyleLine;
+    menuView.progressViewBottomSpace = self.progressViewBottomSpace;
     menuView.layoutMode = self.menuViewLayoutMode;
     menuView.progressHeight = self.progressHeight;
     menuView.contentMargin = self.menuViewContentMargin;
-    menuView.progressViewBottomSpace = self.progressViewBottomSpace;
-    menuView.progressWidths = self.progressViewWidths;
-    menuView.progressViewIsNaughty = self.progressViewIsNaughty;
     menuView.progressViewCornerRadius = self.progressViewCornerRadius;
-    menuView.showOnNavigationBar = self.showOnNavigationBar;
+
     if (self.titleFontName) {
         menuView.fontName = self.titleFontName;
+    }
+    if (self.titleFont) {
+        menuView.font = self.titleFont;
+    }
+    if (self.selectedTitleFont) {
+        menuView.selectedFont = self.selectedTitleFont;
     }
     if (self.progressColor) {
         menuView.lineColor = self.progressColor;
     }
+    
+    if (self.lineGradientColors) {
+        menuView.lineGradientColors = self.lineGradientColors;
+    }
+    
     if (self.showOnNavigationBar && self.navigationController.navigationBar) {
         self.navigationItem.titleView = menuView;
     } else {
@@ -669,8 +674,23 @@ static NSInteger const kWMControllerCountUndefined = -1;
 - (CGFloat)wm_calculateItemWithAtIndex:(NSInteger)index {
     NSString *title = [self titleAtIndex:index];
     UIFont *titleFont = self.titleFontName ? [UIFont fontWithName:self.titleFontName size:self.titleSizeSelected] : [UIFont systemFontOfSize:self.titleSizeSelected];
+    if (self.titleFont) {
+        titleFont = self.titleFont;
+    }
+    
+    
     NSDictionary *attrs = @{NSFontAttributeName: titleFont};
     CGFloat itemWidth = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attrs context:nil].size.width;
+    
+    if (self.selectedTitleFont) {
+        NSDictionary *attrs = @{NSFontAttributeName: self.selectedTitleFont};
+        CGFloat selectedItemWidth = [title boundingRectWithSize:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX) options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:attrs context:nil].size.width;
+
+        if (selectedItemWidth > itemWidth) {
+            itemWidth = selectedItemWidth;
+        }
+    }
+
     return ceil(itemWidth);
 }
 
@@ -790,7 +810,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 #pragma mark - WMMenuView Delegate
-- (void)menuView:(WMMenuView *)menu didSelectedIndex:(NSInteger)index currentIndex:(NSInteger)currentIndex {
+- (void)menuView:(WMMenuView *)menu didSelesctedIndex:(NSInteger)index currentIndex:(NSInteger)currentIndex {
     if (!_hasInited) return;
     _selectIndex = (int)index;
     _startDragging = NO;

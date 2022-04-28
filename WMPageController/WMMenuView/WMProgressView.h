@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSArray *itemFrames;
 @property (nonatomic, assign) CGColorRef color;
 @property (nonatomic, assign) CGFloat progress;
+@property(nonatomic , strong) NSArray *lineGradientColors;
+
 /** 进度条的速度因数，默认为 15，越小越快， 大于 0 */
 @property (nonatomic, assign) CGFloat speedFactor;
 @property (nonatomic, assign) CGFloat cornerRadius;

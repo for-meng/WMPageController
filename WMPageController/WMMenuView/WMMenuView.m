@@ -11,7 +11,7 @@
 #define WMBADGEVIEW_TAG_OFFSET 1212
 #define WMDEFAULT_VAULE(value, defaultValue) (value != WMUNDEFINED_VALUE ? value : defaultValue)
 
-@interface WMMenuView () 
+@interface WMMenuView ()
 @property (nonatomic, weak) WMMenuItem *selItem;
 @property (nonatomic, strong) NSMutableArray *frames;
 @property (nonatomic, assign) NSInteger selectIndex;
@@ -223,6 +223,14 @@
     WMMenuItem *currentItem = (WMMenuItem *)[self viewWithTag:tag];
     WMMenuItem *nextItem = (WMMenuItem *)[self viewWithTag:tag+1];
     if (rate == 0.0) {
+        if (self.font) {
+            self.selItem.font = self.font;
+        }
+        
+        if (self.selectedFont) {
+            currentItem.font = self.selectedFont;
+        }
+
         [self.selItem setSelected:NO withAnimation:NO];
         self.selItem = currentItem;
         [self.selItem setSelected:YES withAnimation:NO];
@@ -240,6 +248,15 @@
     if (index == currentIndex || !self.selItem) { return; }
     
     WMMenuItem *item = (WMMenuItem *)[self viewWithTag:tag];
+    
+    if (self.font) {
+        self.selItem.font = self.font;
+    }
+    
+    if (self.selectedFont) {
+        item.font = self.selectedFont;
+    }
+    
     [self.selItem setSelected:NO withAnimation:NO];
     self.selItem = item;
     [self.selItem setSelected:YES withAnimation:NO];
@@ -495,6 +512,13 @@
         } else {
             item.font = [UIFont systemFontOfSize:item.selectedSize];
         }
+        if (self.font) {
+            item.font = self.font;
+        }
+        if (self.selectedFont && i == 0) {
+            item.font = self.selectedFont;
+        }
+        
         if ([self.dataSource respondsToSelector:@selector(menuView:initialMenuItem:atIndex:)]) {
             item = [self.dataSource menuView:self initialMenuItem:item atIndex:i];
         }
@@ -567,6 +591,7 @@
     WMProgressView *pView = [[WMProgressView alloc] initWithFrame:frame];
     pView.itemFrames = [self convertProgressWidthsToFrames];
     pView.color = self.lineColor.CGColor;
+    pView.lineGradientColors = self.lineGradientColors;
     pView.isTriangle = isTriangle;
     pView.hasBorder = hasBorder;
     pView.hollow = isHollow;
@@ -593,9 +618,17 @@
     
     NSInteger currentIndex = self.selItem.tag - WMMENUITEM_TAG_OFFSET;
     if ([self.delegate respondsToSelector:@selector(menuView:didSelectedIndex:currentIndex:)]) {
-        [self.delegate menuView:self didSelectedIndex:menuItem.tag - WMMENUITEM_TAG_OFFSET currentIndex:currentIndex];
+        [self.delegate menuView:self didSelectedIndex:menuItem.tag-WMMENUITEM_TAG_OFFSET currentIndex:currentIndex];
     }
     
+    if (self.font) {
+        self.selItem.font = self.font;
+    }
+    
+    if (self.selectedFont) {
+        menuItem.font = self.selectedFont;
+    }
+
     [self.selItem setSelected:NO withAnimation:YES];
     [menuItem setSelected:YES withAnimation:YES];
     self.selItem = menuItem;

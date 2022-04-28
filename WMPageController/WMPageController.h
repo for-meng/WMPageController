@@ -205,6 +205,8 @@ extern NSString *const WMControllerDidFullyDisplayedNotification;
  *  The name of title's font
  */
 @property (nonatomic, nullable, copy) NSString *titleFontName;
+@property (nonatomic, nullable, copy) UIFont *titleFont;
+@property (nonatomic, nullable, copy) UIFont *selectedTitleFont;
 
 /**
  *  每个 MenuItem 的宽度
@@ -231,6 +233,8 @@ extern NSString *const WMControllerDidFullyDisplayedNotification;
  *  The progress's color,the default color is same with `titleColorSelected`.If you want to have a different color, set this property.
  */
 @property (nonatomic, nullable, strong) UIColor *progressColor;
+
+@property(nonatomic , strong) NSArray *lineGradientColors;
 
 /**
  *  定制进度条在各个 item 下的宽度
