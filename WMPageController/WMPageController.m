@@ -400,9 +400,11 @@ static NSInteger const kWMControllerCountUndefined = -1;
     _markedSelectIndex = kWMUndefinedIndex;
     _controllerCount  = kWMControllerCountUndefined;
     _scrollEnable = YES;
-    
+    _progressViewCornerRadius = WMUNDEFINED_VALUE;
+    _progressHeight = WMUNDEFINED_VALUE;
+
     self.automaticallyCalculatesItemWidths = NO;
-    [UIScrollView appearance].contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    self.automaticallyAdjustsScrollViewInsets = NO;
     self.preloadPolicy = WMPageControllerPreloadPolicyNever;
     self.cachePolicy = WMPageControllerCachePolicyNoLimit;
     
@@ -434,13 +436,17 @@ static NSInteger const kWMControllerCountUndefined = -1;
     scrollView.showsHorizontalScrollIndicator = NO;
     scrollView.bounces = self.bounces;
     scrollView.scrollEnabled = self.scrollEnable;
-    scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    if (@available(iOS 11.0, *)) {
+        scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     [self.view addSubview:scrollView];
     self.scrollView = scrollView;
     
     if (!self.navigationController) return;
     for (UIGestureRecognizer *gestureRecognizer in scrollView.gestureRecognizers) {
-        [gestureRecognizer requireGestureRecognizerToFail:self.navigationController.interactivePopGestureRecognizer];
+        if (@available(iOS 7.0, *)) {
+            [gestureRecognizer requireGestureRecognizerToFail:self.navigationController.interactivePopGestureRecognizer];
+        }
     }
 }
 
@@ -448,12 +454,15 @@ static NSInteger const kWMControllerCountUndefined = -1;
     WMMenuView *menuView = [[WMMenuView alloc] initWithFrame:CGRectZero];
     menuView.delegate = self;
     menuView.dataSource = self;
-    menuView.style = WMMenuViewStyleLine;
-    menuView.progressViewBottomSpace = self.progressViewBottomSpace;
+    menuView.style = self.menuViewStyle;
     menuView.layoutMode = self.menuViewLayoutMode;
     menuView.progressHeight = self.progressHeight;
     menuView.contentMargin = self.menuViewContentMargin;
+    menuView.progressViewBottomSpace = self.progressViewBottomSpace;
+    menuView.progressWidths = self.progressViewWidths;
+    menuView.progressViewIsNaughty = self.progressViewIsNaughty;
     menuView.progressViewCornerRadius = self.progressViewCornerRadius;
+    menuView.showOnNavigationBar = self.showOnNavigationBar;
 
     if (self.titleFontName) {
         menuView.fontName = self.titleFontName;
@@ -810,7 +819,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
 }
 
 #pragma mark - WMMenuView Delegate
-- (void)menuView:(WMMenuView *)menu didSelesctedIndex:(NSInteger)index currentIndex:(NSInteger)currentIndex {
+- (void)menuView:(WMMenuView *)menu didSelectedIndex:(NSInteger)index currentIndex:(NSInteger)currentIndex {
     if (!_hasInited) return;
     _selectIndex = (int)index;
     _startDragging = NO;

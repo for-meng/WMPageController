@@ -20,4 +20,9 @@
     return NO;
 }
 
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
+//    //是否支持多手势共同识别
+//    return YES;
+//}
+
 @end

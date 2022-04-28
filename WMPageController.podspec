@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
    s.license      = 'MIT (LICENSE)'
    s.author       = { "wangmchn" => "wangmchn@163.com" }
    s.source       = { :git => "https://github.com/wangmchn/WMPageController.git", :tag => s.version.to_s }
-   s.ios.deployment_target = '6.0'
+   s.ios.deployment_target = '10.0'
 
    s.source_files = 'WMPageController/', 'WMPageController/**/*.{h,m}'
 

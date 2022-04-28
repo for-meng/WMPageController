@@ -10,4 +10,8 @@
 
 @interface WMScrollView : UIScrollView <UIGestureRecognizerDelegate>
 
+//@property(nonatomic , assign) BOOL canParentViewScroll;
+//
+//@property(nonatomic , assign) BOOL canChildViewScroll;
+
 @end
