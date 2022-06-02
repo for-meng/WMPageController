@@ -405,6 +405,9 @@ static NSInteger const kWMControllerCountUndefined = -1;
 
     self.automaticallyCalculatesItemWidths = NO;
     self.automaticallyAdjustsScrollViewInsets = NO;
+    if (@available(iOS 11.0, *)) {
+        self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     self.preloadPolicy = WMPageControllerPreloadPolicyNever;
     self.cachePolicy = WMPageControllerCachePolicyNoLimit;
     
@@ -463,7 +466,6 @@ static NSInteger const kWMControllerCountUndefined = -1;
     menuView.progressViewIsNaughty = self.progressViewIsNaughty;
     menuView.progressViewCornerRadius = self.progressViewCornerRadius;
     menuView.showOnNavigationBar = self.showOnNavigationBar;
-
     if (self.titleFontName) {
         menuView.fontName = self.titleFontName;
     }
