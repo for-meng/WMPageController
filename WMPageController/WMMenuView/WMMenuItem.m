@@ -92,11 +92,13 @@
 - (void)setSelectedColor:(UIColor *)selectedColor {
     _selectedColor = selectedColor;
     [selectedColor getRed:&_selectedRed green:&_selectedGreen blue:&_selectedBlue alpha:&_selectedAlpha];
+    [self setRate:self.rate];
 }
 
 - (void)setNormalColor:(UIColor *)normalColor {
     _normalColor = normalColor;
     [normalColor getRed:&_normalRed green:&_normalGreen blue:&_normalBlue alpha:&_normalAlpha];
+    [self setRate:self.rate];
 }
 
 - (void)touchUpInside:(id)sender {
