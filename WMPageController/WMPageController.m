@@ -223,6 +223,16 @@ static NSInteger const kWMControllerCountUndefined = -1;
     }
 }
 
+- (void)setTitleColorNormal:(UIColor *)titleColorNormal{
+    _titleColorNormal = titleColorNormal;
+    [self.menuView reloadTitleAttribute];
+}
+
+- (void)setTitleColorSelected:(UIColor *)titleColorSelected{
+    _titleColorSelected = titleColorSelected;
+    [self.menuView reloadTitleAttribute];
+}
+
 #pragma mark - Notification
 - (void)willResignActive:(NSNotification *)notification {
     for (int i = 0; i < self.childControllersCount; i++) {

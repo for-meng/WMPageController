@@ -101,6 +101,7 @@ typedef NS_ENUM(NSUInteger, WMMenuViewLayoutMode) {
 - (void)selectItemAtIndex:(NSInteger)index;
 - (void)resetFrames;
 - (void)reload;
+- (void)reloadTitleAttribute;
 - (void)updateTitle:(NSString *)title atIndex:(NSInteger)index andWidth:(BOOL)update;
 - (void)updateAttributeTitle:(NSAttributedString *)title atIndex:(NSInteger)index andWidth:(BOOL)update;
 - (WMMenuItem *)itemAtIndex:(NSInteger)index;

@@ -214,6 +214,15 @@
     [self addBadgeViews];
 }
 
+- (void)reloadTitleAttribute{
+    [self.scrollView.subviews enumerateObjectsUsingBlock:^(__kindof WMMenuItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if([obj isKindOfClass:WMMenuItem.class]){
+            obj.normalColor   = [self colorForState:WMMenuItemStateNormal atIndex:idx];
+            obj.selectedColor = [self colorForState:WMMenuItemStateSelected atIndex:idx];
+        }
+    }];
+}
+
 - (void)slideMenuAtProgress:(CGFloat)progress {
     if (self.progressView) {
         self.progressView.progress = progress;
