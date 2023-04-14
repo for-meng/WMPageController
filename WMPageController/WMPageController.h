@@ -93,6 +93,8 @@ extern NSString *const WMControllerDidFullyDisplayedNotification;
 @protocol WMPageControllerDelegate <NSObject>
 @optional
 
+- (void)pageController:(WMPageController *)pageController fromViewController:(__kindof UIViewController *)fromViewController toViewController:(__kindof UIViewController *)toViewController withInfo:(NSDictionary *)info;
+
 /**
  *  If the child controller is heavy, put some work in this method. This method will only be called when the controller is initialized and stop scrolling. (That means if the controller is cached and hasn't released will never call this method.)
  *
@@ -281,6 +283,8 @@ extern NSString *const WMControllerDidFullyDisplayedNotification;
  *  Set startDragging = YES before set contentView.contentOffset = xxx;
  */
 @property (nonatomic, assign) BOOL startDragging;
+@property (nonatomic, assign) NSInteger startDraggingIndex;
+@property (nonatomic, assign) CGFloat startDraggingOffsetX;
 
 /** 下划线进度条的高度 */
 @property (nonatomic, assign) CGFloat progressHeight;

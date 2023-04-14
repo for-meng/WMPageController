@@ -771,14 +771,38 @@ static NSInteger const kWMControllerCountUndefined = -1;
     [self wm_layoutChildViewControllers];
     if (_startDragging) {
         CGFloat contentOffsetX = scrollView.contentOffset.x;
+        CGFloat itemWidth = _contentViewFrame.size.width;
         if (contentOffsetX < 0) {
             contentOffsetX = 0;
         }
-        if (contentOffsetX > scrollView.contentSize.width - _contentViewFrame.size.width) {
-            contentOffsetX = scrollView.contentSize.width - _contentViewFrame.size.width;
+        if (contentOffsetX > scrollView.contentSize.width - itemWidth) {
+            contentOffsetX = scrollView.contentSize.width - itemWidth;
         }
-        CGFloat rate = contentOffsetX / _contentViewFrame.size.width;
+        CGFloat rate = contentOffsetX / itemWidth;
         [self.menuView slideMenuAtProgress:rate];
+        
+        if ([self.delegate respondsToSelector:@selector(pageController:fromViewController:toViewController:withInfo:)]) {
+            
+            
+            NSInteger toIndex;
+            double switchProgress;
+            if(contentOffsetX > _startDraggingOffsetX) {
+                //右
+                CGFloat nextOffset = _startDraggingOffsetX + itemWidth;
+                switchProgress = (nextOffset - contentOffsetX) / itemWidth;
+                toIndex = _startDraggingIndex + 1;
+            }else {
+                //左
+                CGFloat nextOffset = _startDraggingOffsetX - itemWidth;
+                switchProgress = (contentOffsetX - nextOffset) / itemWidth;
+                toIndex = _startDraggingIndex - 1;
+            }
+                        
+            UIViewController *fromViewController = self.displayVC[@(_startDraggingIndex)];
+            UIViewController *toViewController = self.displayVC[@(toIndex)];
+            NSDictionary *info = @{@"fromIndex": @(_startDraggingIndex), @"toIndex": @(toIndex), @"progress" : @(switchProgress)};
+            [self.delegate pageController:self fromViewController:fromViewController toViewController:toViewController withInfo:info];
+        }
     }
    
     // Fix scrollView.contentOffset.y -> (-20) unexpectedly.
@@ -792,6 +816,8 @@ static NSInteger const kWMControllerCountUndefined = -1;
     if (![scrollView isKindOfClass:WMScrollView.class]) return;
     
     _startDragging = YES;
+    _startDraggingOffsetX = scrollView.contentOffset.x;
+    _startDraggingIndex = (int)(_startDraggingOffsetX / _contentViewFrame.size.width);
     self.menuView.userInteractionEnabled = NO;
 }
 
@@ -835,6 +861,7 @@ static NSInteger const kWMControllerCountUndefined = -1;
     if (!_hasInited) return;
     _selectIndex = (int)index;
     _startDragging = NO;
+
     CGPoint targetP = CGPointMake(_contentViewFrame.size.width * index, 0);
     [self.scrollView setContentOffset:targetP animated:self.pageAnimatable];
     if (self.pageAnimatable) return;
